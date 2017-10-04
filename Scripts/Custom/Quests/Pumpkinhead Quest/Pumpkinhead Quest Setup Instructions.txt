@@ -1,0 +1,36 @@
+Pumpkinhead Quest.
+Created by dracana.
+
+Following is a guide to help you successfully setup the Pumpkinhead quest on your shard.  It is fairly straightforward, there is only one NPC to add/spawn.  There are two addons that you can add to suit all quest dialogue, but if you decide not to use them, I will give you locations and alternative solution.  All locations are in Trammel/Felucca.
+
+
+QUEST STORY
+Basically this is a quest based on the movie Pumpkinhead.  I know 80% of the world thought it was a terrible movie, but I loved it!! :-)
+Players will need to find and talk to Haggis the blind witch.  If interested in "revenge", they can pay her 10,000 gold for more information.  Feel free to change this amount in Haggis.cs, to suit your shards economy.  After dropping 10,000 gold on Haggis, she will tell players to go to the graveyard north of her, find the grave of Pumpkinhead, and dig him up.  She will supply a shovel for the task.  Success will come quicker for players with higher mining!  Once they get the remains, they can drop them on Haggis, who will give them a Pumpkinhead summoner.  The summoner has five charges and will summon Pumpkinhead for revenge on any mobile allowed. Summoner will lose alot of Karma for summoning though (even if summoning against an evil mobile)! 
+
+Pumpkinhead is similar in behaviour to a revenant, but much stronger.  Like a revenant, it will dissappear after a given time,  when the target dies, or when used against a creature that uses AutoDispel (dragon,etc).  He will also die if the summoner dies.  In addition, as pumpkinhead takes damage, the player who summoned him will take damage and lose stamina.  Also, as pumpkinhead gives damage, he will recover hits and also have a chance to freeze the target with fear.  Once again, feel free to tweak any of Pumpkinhead's attributes to suit your own shard.
+
+
+ADDON SETUP:
+There are two addons available for this quest.  I will provide the addon name and the location I recommend adding it.  If you decide to use addons, but in a different place, feel free to modify the dialogue gumps for Haggis.
+
+1. Haggis' Shack - I have this in the woods near Cove.  Go to location "2603, 1162, 0" by typing "[go 2603 1162 0".  If this spot in the woods is still open, add the Shack addon here by typing "[add HaggisShackAddon".  If the space is not available, try to find another open spot in the woods south of this location.  
+	*Optional* If you use a utility to convert addons to statics (like Alabamik's Addon2Static script), you can convert this addon to a static and if you desire, freeze it and patch it.
+
+2. Pumpkinhead's Grave - This is in the crypt at the Cove cemetary.  Go to location "2442, 1086, 28" by typing "[go 2442 1086 28".  You can add the grave addon by typing "[add PumpkinheadGraveAddon" and targeting the tile at your position. The addon must be place over a grave location! 
+	*Note* If you decide not to use this addon, be sure to 
+	1. Add some Pumpkins around the mound of gravedirt by typing [add Pumpkin
+	2. Open \PumpkinheadQuest\Items\PumpkinheadShovel.cs in a text editor.  Now Find "PumpkinheadGraveAddon" on lines 292 and 338 and replace the text with "Pumpkin"
+
+
+QUEST NPC SETUP:
+There is only one NPC in this quest that players will talk to a couple times. She will be added in the Shack addon loaded above.
+1. Haggis - Go to loc "2602, 1160, 2" by typing "[go 2602 1160 2", and add Haggis in the shack by typing "[add Haggis" and placing her there.
+
+That's all you need to do. However, if you decide to change any of the above locations, you will also need to change the Haggis Dialogue gumps in the  to pertain to your new locations.
+
+
+CREDITS:
+First of all, thanks to RoninGT for his Grave Digger Shovel, which I used as the basis for my Pumpkinhead Shovel.  Also to Arya for the wonderful Addon Generator, which I used to create my two addons for the quest.  Finally, thanks to the RunUO team for their wonderful core scripts such as Revenant.cs, VengefulSpirit.cs, etc, from which I was able to create Pumpkinhead himself!
+
+Hope you enjoy.

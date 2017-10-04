@@ -49,8 +49,17 @@ namespace Server.Misc
             PackItem(new RedBook("a book", m.Name, 20, true));
             PackItem(new Gold(1000)); // Starting gold can be customized here
             PackItem(new Candle());
-			PackItem(new Gold(10000)); //custom PirateCove
-			PackItem(new daat99.MasterStorage()); //daat99 OWLTR
+			//dartanis PirateCove - start - Add custom starting items
+			PackItem( new BankCheck( 25000 ) );
+			PackItem( new EtherealHorse() );
+            PackItem(new daat99.MasterStorage());
+			PackItem( new TokenCheck(100) );
+			PackItem( new Trash4TokensBackpack() );
+			PackItem( new Xanthos.Claim.GoldBag() );
+			PackItem( new Xanthos.Claim.LootBag() );
+			PackItem( new SkillBall(15) );
+			PackItem( new SkillBall(15) );
+			//dartanis PirateCove - end - Add custom starting items
 
             if (m.Race != Race.Gargoyle)
                 PackItem(new Dagger());

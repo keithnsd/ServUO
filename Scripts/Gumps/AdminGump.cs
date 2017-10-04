@@ -824,14 +824,16 @@ namespace Server.Gumps
                             }
 
                             this.AddLabelCropped(132, offset, 120, 20, LabelHue, FormatAccessLevel(accessLevel));
-
+							
+							//dartanis PirateCove - start - Add Last Login date/time
                             if (online)
-                                this.AddLabelCropped(252, offset, 120, 20, GreenHue, "Online");
+                                this.AddLabelCropped(250, offset, 120, 20, GreenHue, "On - " + a.LastLogin.ToString("d"));
                             else if (a.Banned)
-                                this.AddLabelCropped(252, offset, 120, 20, RedHue, "Banned");
+                                this.AddLabelCropped(250, offset, 120, 20, RedHue, "Ban - " + a.LastLogin.ToString("d"));
                             else
-                                this.AddLabelCropped(252, offset, 120, 20, RedHue, "Offline");
-
+                                this.AddLabelCropped(250, offset, 120, 20, RedHue, "Off - " + a.LastLogin.ToString("d"));
+							//dartanis PirateCove - end - Add Last Login date/time
+							
                             this.AddButton(380, offset - 1, 0xFA5, 0xFA7, this.GetButtonID(5, index + 56), GumpButtonType.Reply, 0);
                         }
 

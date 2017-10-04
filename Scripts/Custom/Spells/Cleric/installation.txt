@@ -1,0 +1,18 @@
+simply drop in your custom scripts folder and make the following two changes to baseweapon
+
+around line 1630 toward the end of the onhit method change the following check as such
+
+if ( a != null )
+a.OnHit( attacker, defender, damage );
+// added for cleric spells
+PlayerEvent.InvokeHitByWeapon(attacker, defender, damage, a);
+// end added 
+
+and at the top at the end of the using statements add the following to the bottom
+
+using Server.Spells.Custom;
+
+
+
+
+now enjoy.

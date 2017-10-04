@@ -1,0 +1,1 @@
+all credit for the creation of the main package goes to theoutkastdev ( i believe he was the original creator ) and darknesspr for the macros command script ( it was his updated package i used ) and to everyone else that has updated or debugged these scripts.  all i have done here is update them for use with runuo2.0.

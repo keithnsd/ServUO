@@ -25,6 +25,7 @@ using Server.Spells.Sixth;
 using Server.Spells.Spellweaving;
 using Server.Spells.SkillMasteries;
 using System.Linq;
+using Server.Spells.Custom; //dartanis PirateCove - custom Cleric spells
 #endregion
 
 namespace Server.Items
