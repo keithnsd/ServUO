@@ -366,7 +366,6 @@ namespace Server.Engines.Craft
                 SetDisplayID(index, 1313);
                 SetNeededExpansion(index, Expansion.TOL);
             }
-            #endregion
 
             MarkOption = true;
             Repair = Core.SA;
