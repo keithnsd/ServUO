@@ -13,6 +13,16 @@ namespace Server.Engines.BulkOrders
             0.125000000, // Spined
             0.015625000, // Horned
             0.001953125  // Barbed
+			//daat99 OWLTR start - custom resources
+			,
+			0.001800000, // Polar
+			0.001760000, // Synthetic
+			0.001710000, // Blaze
+			0.001650000, // Daemonic
+			0.001500000, // Shadow
+			0.001200000, // Frost
+			0.001000000, // Ethereal
+			//daat99 OWLTR end - custom resources
         };
         [Constructable]
         public LargeTailorBOD()

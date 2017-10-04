@@ -19,6 +19,14 @@ namespace Server.Engines.BulkOrders
             0.007812500, // Agapite
             0.003906250, // Verite
             0.001953125  // Valorite
+			//daat99 OWLTR start - custom resources
+			,
+			0.001700000, // Blaze
+			0.001600000, // Ice
+			0.001500000, // Toxic
+			0.001200000, // Electrum
+			0.001000000  // Platinum
+			//daat99 OWLTR end - custom resources
         };
         [Constructable]
         public LargeSmithBOD()

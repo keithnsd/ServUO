@@ -175,8 +175,10 @@ namespace Server.Engines.BulkOrders
                 list.Add(1045141); // All items must be exceptional.
 
             if (this.m_Material != BulkMaterialType.None)
-                list.Add(SmallBODGump.GetMaterialNumberFor(this.m_Material)); // All items must be made with x material.
-
+				//daat99 OWLTR - start - custom resources
+                list.Add("All items must be crafted with " + LargeBODGump.GetMaterialStringFor(m_Material)); // All items must be made with x material.
+				//daat99 OWLTR - end - custom resources
+				
             list.Add(1060656, this.m_AmountMax.ToString()); // amount to make: ~1_val~
 
             for (int i = 0; i < this.m_Entries.Length; ++i)

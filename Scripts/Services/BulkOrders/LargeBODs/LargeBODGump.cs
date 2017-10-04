@@ -84,7 +84,9 @@ namespace Server.Engines.BulkOrders
 
             if (deed.Material != BulkMaterialType.None)
             {
-                this.AddHtmlLocalized(75, y, 300, 20, SmallBODGump.GetMaterialNumberFor(deed.Material), 0x7FFF, false, false); // All items must be made with x material.
+                //daat99 OWLTR start - custom resources
+                AddHtml(75, y, 400, 25, "<basefont color=#FF0000>All items must be crafted with " + GetMaterialStringFor(deed.Material), false, false);
+				//daat99 OWLTR end - custom resources
                 y += 24;
             }
 
@@ -125,6 +127,18 @@ namespace Server.Engines.BulkOrders
             }
         }
 
+        //daat99 OWLTR start - custom resources
+        public static int GetMaterialNumberFor(BulkMaterialType material)
+        {
+            if (material >= BulkMaterialType.DullCopper && material <= BulkMaterialType.Valorite)
+                return 1045142 + (int)(material - BulkMaterialType.DullCopper);
+            else if (material >= BulkMaterialType.Spined && material <= BulkMaterialType.Barbed)
+                return 1049348 + (int)(material - BulkMaterialType.Spined);
+
+            return 0;
+        }
+        //daat99 OWLTR end - custom resources
+				
         public override void OnResponse(NetState sender, RelayInfo info)
         {
             if (this.m_Deed.Deleted || !this.m_Deed.IsChildOf(this.m_From.Backpack))
@@ -169,5 +183,50 @@ namespace Server.Engines.BulkOrders
                 });
             }
         }
+        //daat99 OWLTR start - custom resource
+        public static string GetMaterialStringFor(BulkMaterialType material)
+        {
+            string result = "UNKNOWN";
+            switch ((int)material)
+            {
+                case 1: result = "dull copper ingots"; break;
+                case 2: result = "shadow iron ingots"; break;
+                case 3: result = "copper ingots"; break;
+                case 4: result = "bronze ingots"; break;
+                case 5: result = "gold ingots"; break;
+                case 6: result = "agapite ingots"; break;
+                case 7: result = "verite ingots"; break;
+                case 8: result = "valorite ingots"; break;
+                case 9: result = "blaze ingots"; break;
+                case 10: result = "ice ingots"; break;
+                case 11: result = "toxic ingots"; break;
+                case 12: result = "electrum ingots"; break;
+                case 13: result = "platinum ingots"; break;
+                case 14: result = "spined leather"; break;
+                case 15: result = "horned leather"; break;
+                case 16: result = "barbed leather"; break;
+                case 17: result = "polar leather"; break;
+                case 18: result = "synthetic leather"; break;
+                case 19: result = "blaze leather"; break;
+                case 20: result = "daemonic leather"; break;
+                case 21: result = "shadow leather"; break;
+                case 22: result = "frost leather"; break;
+                case 23: result = "ethereal leather"; break;
+                //	case 24: result = "regular wood"; break;
+                case 24: result = "oak wood"; break;
+                case 25: result = "ash wood"; break;
+                case 26: result = "yew wood"; break;
+                case 27: result = "heartwood wood"; break;
+                case 28: result = "bloodwood wood"; break;
+                case 29: result = "frostwood wood"; break;
+                case 30: result = "ebony wood"; break;
+                case 31: result = "bamboo wood"; break;
+                case 32: result = "purpleheart wood"; break;
+                case 33: result = "redwood wood"; break;
+                case 34: result = "petrified wood"; break;
+            }
+            return result;
+        }
+        //daat99 OWLTR end - custom resource
     }
 }

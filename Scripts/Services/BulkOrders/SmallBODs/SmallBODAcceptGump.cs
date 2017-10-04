@@ -47,7 +47,9 @@ namespace Server.Engines.BulkOrders
                     AddHtmlLocalized(40, 168, 350, 20, 1045141, 0x7FFF, false, false); // All items must be exceptional.
 
                 if (deed.Material != BulkMaterialType.None)
-                    AddHtmlLocalized(40, deed.RequireExceptional ? 192 : 168, 350, 20, SmallBODGump.GetMaterialNumberFor(deed.Material), 0x7FFF, false, false); // All items must be made with x material.
+                  //daat99 OWLTR start - custom resources
+                    AddHtml(40, deed.RequireExceptional ? 192 : 168, 350, 25, "<basefont color=#FF0000>All items must be crafted with " + LargeBODGump.GetMaterialStringFor(deed.Material), false, false);
+                //daat99 OWLTR end - cusotom resources
             }
 
             AddHtmlLocalized(40, 216, 350, 20, 1045139, 0x7FFF, false, false); // Do you want to accept this order?

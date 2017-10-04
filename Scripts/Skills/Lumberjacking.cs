@@ -1,11 +1,108 @@
 using System;
 using Server.Items;
 using Server.Network;
+using Server.Mobiles; //daat99 OWLTR
+using daat99; //daat99 OWLTR
 
 namespace Server.Engines.Harvest
 {
     public class Lumberjacking : HarvestSystem
     {
+        //daat99 OWLTR start - gargoyle axe
+        public override HarvestVein MutateVein(Mobile from, Item tool, HarvestDefinition def, HarvestBank bank, object toHarvest, HarvestVein vein)
+        {
+            if (tool is GargoylesAxe)
+            {
+                int veinIndex = Array.IndexOf(def.Veins, vein);
+
+                if (veinIndex >= 0 && veinIndex < (def.Veins.Length - 1))
+                    return def.Veins[veinIndex + 1];
+            }
+
+            return base.MutateVein(from, tool, def, bank, toHarvest, vein);
+        }
+
+        private static int[] m_Offsets = new int[]
+			{
+				-1, -1,
+				-1,  0,
+				-1,  1,
+				0, -1,
+				0,  1,
+				1, -1,
+				1,  0,
+				1,  1
+			};
+
+        public override void OnHarvestFinished(Mobile from, Item tool, HarvestDefinition def, HarvestVein vein, HarvestBank bank, HarvestResource resource, object harvested, Type type)
+        {
+            if (tool is GargoylesAxe && 0.1 < Utility.RandomDouble())
+            {
+                HarvestResource res = vein.PrimaryResource;
+
+                Map map = from.Map;
+                if (map == null)
+                    return;
+                BaseCreature spawned = null;
+
+                int i_Level = 0;
+                if (OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.DAAT99_LUMBERJACKING))
+                    i_Level = CraftResources.GetIndex(CraftResources.GetFromType(type)) + 301;
+                else if (res == resource)
+                {
+                    try
+                    {
+                        i_Level = Array.IndexOf(def.Veins, vein) + 301;
+                    }
+                    catch { }
+                }
+                //		if (i_Level > 300 && OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.HARVEST_GIVE_TOKENS))
+                //			TokenSystem.GiveTokensToPlayer(from as PlayerMobile, (i_Level - 300)*10);
+                if (i_Level > 301)
+                    spawned = new Elementals(i_Level);
+                else
+                    spawned = null;
+
+                try
+                {
+                    if (spawned != null)
+                    {
+                        int offset = Utility.Random(8) * 2;
+
+                        for (int i = 0; i < m_Offsets.Length; i += 2)
+                        {
+                            int x = from.X + m_Offsets[(offset + i) % m_Offsets.Length];
+                            int y = from.Y + m_Offsets[(offset + i + 1) % m_Offsets.Length];
+
+                            if (map.CanSpawnMobile(x, y, from.Z))
+                            {
+                                spawned.MoveToWorld(new Point3D(x, y, from.Z), map);
+                                spawned.Combatant = from;
+                                return;
+                            }
+                            else
+                            {
+                                int z = map.GetAverageZ(x, y);
+
+                                if (map.CanSpawnMobile(x, y, z))
+                                {
+                                    spawned.MoveToWorld(new Point3D(x, y, z), map);
+                                    spawned.Combatant = from;
+                                    return;
+                                }
+                            }
+                        }
+                        spawned.MoveToWorld(from.Location, from.Map);
+                        spawned.Combatant = from;
+                    }
+                }
+                catch
+                {
+                }
+            }
+        }
+        //daat99 OWLTR end - gargoyle axe
+		
         private static Lumberjacking m_System;
 
         public static Lumberjacking System
@@ -86,6 +183,13 @@ namespace Server.Engines.Harvest
                     new HarvestResource(100.0, 60.0, 140.0, 1072544, typeof(HeartwoodLog)),
                     new HarvestResource(100.0, 60.0, 140.0, 1072545, typeof(BloodwoodLog)),
                     new HarvestResource(100.0, 60.0, 140.0, 1072546, typeof(FrostwoodLog)),
+					//daat99 OWLTR - Custom Resources - start
+					new HarvestResource(100.0, 70.0, 140.0, "You put some Ebony logs in your backpack",			typeof( EbonyLog ) ),
+					new HarvestResource(105.0, 80.0, 145.0, "You put some Bamboo logs in your backpack",		typeof( BambooLog ) ),
+					new HarvestResource(110.0, 90.0, 150.0, "You put some Purple Heart logs in your backpack",	typeof( PurpleHeartLog ) ),
+					new HarvestResource(115.0, 100.0, 155.0, "You put some Redwood logs in your backpack",		typeof( RedwoodLog ) ),
+					new HarvestResource(120.0, 110.0, 160.0, "You put some Petrified logs in your backpack",	typeof( PetrifiedLog ) )
+					//daat99 OWLTR - Custom Resources - end
                 };
 
                 veins = new HarvestVein[]
@@ -97,6 +201,13 @@ namespace Server.Engines.Harvest
                     new HarvestVein(03.0, 0.5, res[4], res[0]), // Heartwood
                     new HarvestVein(02.0, 0.5, res[5], res[0]), // Bloodwood
                     new HarvestVein(01.0, 0.5, res[6], res[0]), // Frostwood
+					//daat99 OWLTR - Custom Resources - start
+					new HarvestVein(07.0, 0.5, res[7], res[0] ), 	// EbonyLog
+					new HarvestVein(06.0, 0.5, res[8], res[0] ), 	// BambooLog
+					new HarvestVein(05.0, 0.5, res[9], res[0] ), 	// PurpleHeartLog
+					new HarvestVein(04.0, 0.5, res[10], res[0] ),	// RedwoodLog
+					new HarvestVein(03.0, 0.5, res[11], res[0] ),	// PetrifiedLog
+					//daat99 OWLTR - Custom Resources - end
                 };
 
                 lumber.BonusResources = new BonusHarvestResource[]

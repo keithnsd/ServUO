@@ -395,6 +395,8 @@ namespace Server.Engines.Craft
             if (Core.AOS)
             {
                 this.AddCraft(typeof(Engines.BulkOrders.BulkOrderBook), 1044294, 1028793, 65.0, 115.0, typeof(BlankScroll), 1044377, 10, 1044378);
+				//daat99 OWLTR - BOD Book
+                //this.AddCraft(typeof(Engines.BulkOrders.BulkOrderBook2), 1044294, "Bulk Order Book 2", 65.0, 115.0, typeof(BlankScroll), 1044377, 10, 1044378);
             }
 
             if (Core.SE)

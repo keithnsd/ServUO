@@ -819,15 +819,9 @@ namespace Server.Engines.Craft
             }
             #endregion
 
-            // Set the overridable material
-            this.SetSubRes(typeof(Leather), 1049150);
-
-            // Add every material you want the player to be able to choose from
-            // This will override the overridable material
-            this.AddSubRes(typeof(Leather), 1049150, 00.0, 1044462, 1049311);
-            this.AddSubRes(typeof(SpinedLeather), 1049151, 65.0, 1044462, 1049311);
-            this.AddSubRes(typeof(HornedLeather), 1049152, 80.0, 1044462, 1049311);
-            this.AddSubRes(typeof(BarbedLeather), 1049153, 99.0, 1044462, 1049311);
+            //daat99 OWLTR start - custom leather
+            daat99.ResourceHelper.AddTailorResources(this);
+            //daat99 OWLTR end - custom leather
 
             this.MarkOption = true;
             this.Repair = Core.AOS;

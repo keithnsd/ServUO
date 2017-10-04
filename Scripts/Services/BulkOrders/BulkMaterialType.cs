@@ -15,15 +15,38 @@ namespace Server.Engines.BulkOrders
         Agapite,
         Verite,
         Valorite,
+        //daat99 OWLTR start - custom resources
+        Blaze,
+        Ice,
+        Toxic,
+        Electrum,
+        Platinum,
+        //daat99 OWLTR end - custom resources
         Spined,
         Horned,
         Barbed,
+        //daat99 OWLTR start - custom resources
+        Polar,
+        Synthetic,
+        BlazeL,
+        Daemonic,
+        Shadow,
+        Frost,
+        Ethereal,
+        //daat99 OWLTR end - custom resources
         OakWood,
         AshWood,
         YewWood,
         Heartwood,
         Bloodwood,
-        Frostwood
+        Frostwood,
+        //daat99 OWLTR start - custom resources
+        Ebony,
+        Bamboo,
+        PurpleHeart,
+        Redwood,
+        Petrified
+        //daat99 OWLTR end - custom resources
     }
 
     public enum BulkGenericType

@@ -1,11 +1,15 @@
 using System;
+using System.Collections; //daat99 OWLTR
 using System.Collections.Generic;
+using Server; //daat99 OWLTR
 using Server.Gumps;
 using Server.Items;
 using Server.Mobiles;
 using Server.Regions;
 using System.Linq;
 using Server.Spells.Necromancy;
+using daat99; //daat99 OWLTR
+using Server.Network; //daat99 OWLTR - Gatherer
 
 namespace Server.Engines.CannedEvil
 {
@@ -13,6 +17,7 @@ namespace Server.Engines.CannedEvil
     {
         public static readonly int MaxStrayDistance = 250;
 
+		private static int GatheredGold; //daat99 OWLTR - gathered gold
         private bool m_Active;
         private bool m_RandomizeType;
         private ChampionSpawnType m_Type;
@@ -326,7 +331,12 @@ namespace Server.Engines.CannedEvil
             get
             {
 				int l = Level;
-                return ChampionSystem.MaxKillsForLevel(l);
+                //daat99 OWLTR start - champ 1/6
+                if (m_Type == ChampionSpawnType.Crafter)
+                    return 125 - (l * 6);
+                else
+                //daat99 OWLTR end - champ 1/6
+					return ChampionSystem.MaxKillsForLevel(l);
             }
         }
 
@@ -356,6 +366,33 @@ namespace Server.Engines.CannedEvil
 
                 Effects.PlaySound(skull.Location, skull.Map, 0x29);
                 Effects.SendLocationEffect(new Point3D(skull.X + 1, skull.Y + 1, skull.Z), skull.Map, 0x3728, 10);
+				
+				//daat99 OWLTR start - Champ Cleaner
+                if (OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.A_LI_N_CLEAN_CHAMP))
+                {
+                    ArrayList onGround = new ArrayList();
+                    foreach (Item item in Map.GetItemsInRange(Location, (int)(Math.Max(m_SpawnArea.Width, m_SpawnArea.Height) * 1.5)))
+                    {
+                        if (item is Corpse && ((Corpse)item).Owner != null)
+                        {
+                            if (!(((Corpse)item).Owner is PlayerMobile))
+                            {
+                                BaseCreature bc = ((Corpse)item).Owner as BaseCreature;
+                                if (bc.ControlMaster == null)
+                                {
+                                    //Gatherer Code
+                                    foreach (Item ioc in item.Items)
+                                        if (ioc is Gold)
+                                            GatheredGold += ioc.Amount;
+                                    onGround.Add(item);
+                                }
+                            }
+                        }
+                    }
+                    foreach (Corpse c in onGround)
+                        c.Delete();
+                }
+                //daat99 OWLTR end - Champ Cleaner
             }
         }
 
@@ -448,7 +485,7 @@ namespace Server.Engines.CannedEvil
         {
             if (RandomizeType)
             {
-                switch (Utility.Random(5))
+                switch (Utility.Random(6))  //daat99 - Add MOA
                 {
                     case 0:
                         Type = ChampionSpawnType.Abyss; break;
@@ -460,6 +497,10 @@ namespace Server.Engines.CannedEvil
                         Type = ChampionSpawnType.VerminHorde; break;
                     case 4:
                         Type = ChampionSpawnType.UnholyTerror; break;
+                    //daat99 OWLTR start - Master of the Arts
+                    case 5:
+						Type = ChampionSpawnType.Crafter; break; //daat99 MOA
+                    //daat99 OWLTR end - Master of the Arts
                 }
             }
 
@@ -567,6 +608,8 @@ namespace Server.Engines.CannedEvil
 
                     m_DamageEntries.Clear();
 
+                    if (m_Type != ChampionSpawnType.Crafter) //daat99 OWLTR start - no gate for MotA
+					
                     if (m_Altar != null)
                     {
                         m_Altar.Hue = 0x455;
@@ -757,6 +800,26 @@ namespace Server.Engines.CannedEvil
 
             if (m_Champion != null)
                 m_Champion.MoveToWorld(new Point3D(X, Y, Z - 15), Map);
+			
+			//daat99 OWLTR start - drop gathered stuff
+            if (OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.A_LI_N_CLEAN_CHAMP) && OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.SAVE_CLEAN_CHAMP_GOLD))
+            {
+                if (Map != null)
+                {
+                    for (int x = -6; x <= 6; ++x)
+                    {
+                        for (int y = -6; y <= 6; ++y)
+                        {
+                            double dist = Math.Sqrt(x * x + y * y);
+
+                            if (dist <= 6)
+                                new DropGatheredTimer(Map, X + x, Y + y).Start();
+                        }
+                    }
+                    this.PublicOverheadMessage(MessageType.Regular, 0, false, "Dropping " + GatheredGold.ToString() + " Gold that was gathered from the Spawn.");
+                }
+            }
+            //daat99 OWLTR end - drop gathered stuff
         }
 
         public void Respawn()
@@ -1387,6 +1450,46 @@ namespace Server.Engines.CannedEvil
             Timer.DelayCall(TimeSpan.Zero, new TimerCallback(UpdateRegion));
         }
 
+        //daat99 OWLTR start - drop gathered timer
+        private class DropGatheredTimer : Timer
+        {
+            private Map m_Map;
+            private int m_X, m_Y;
+
+            public DropGatheredTimer(Map map, int x, int y)
+                : base(TimeSpan.FromSeconds(Utility.RandomDouble() * 10.0))
+            {
+                m_Map = map;
+                m_X = x;
+                m_Y = y;
+            }
+
+            protected override void OnTick()
+            {
+                int z = m_Map.GetAverageZ(m_X, m_Y);
+                bool canFit = m_Map.CanFit(m_X, m_Y, z, 6, false, false);
+
+                for (int i = -5; !canFit && i <= 20; ++i)
+                {
+                    canFit = m_Map.CanFit(m_X, m_Y, z + i, 6, false, false);
+
+                    if (canFit)
+                        z += i;
+                }
+
+                if (!canFit)
+                    return;
+
+                if (GatheredGold > 0)
+                {
+                    Gold g = new Gold(500, 1000);
+                    g.MoveToWorld(new Point3D(m_X, m_Y, z), m_Map);
+                    GatheredGold -= g.Amount;
+                }
+            }
+        }
+        //daat99 OWLTR end - drop gathered timer
+		
 		public void SendGump(Mobile mob)
 		{
 			mob.SendGump(new ChampionSpawnInfoGump(this));

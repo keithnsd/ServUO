@@ -414,42 +414,7 @@ namespace Server.Items
                 if (m_Protection != ArmorProtectionLevel.Regular)
                     ar += 10 + (5 * (int)m_Protection);
 
-                switch ( m_Resource )
-                {
-                    case CraftResource.DullCopper:
-                        ar += 2;
-                        break;
-                    case CraftResource.ShadowIron:
-                        ar += 4;
-                        break;
-                    case CraftResource.Copper:
-                        ar += 6;
-                        break;
-                    case CraftResource.Bronze:
-                        ar += 8;
-                        break;
-                    case CraftResource.Gold:
-                        ar += 10;
-                        break;
-                    case CraftResource.Agapite:
-                        ar += 12;
-                        break;
-                    case CraftResource.Verite:
-                        ar += 14;
-                        break;
-                    case CraftResource.Valorite:
-                        ar += 16;
-                        break;
-                    case CraftResource.SpinedLeather:
-                        ar += 10;
-                        break;
-                    case CraftResource.HornedLeather:
-                        ar += 13;
-                        break;
-                    case CraftResource.BarbedLeather:
-                        ar += 16;
-                        break;
-                }
+				ar += CraftResources.GetIndex(m_Resource) * 2; //daat99 OWLTR - armor rating
 
                 ar += -8 + (8 * (int)m_Quality);
                 return ScaleArmorByDurability(ar);
@@ -1195,11 +1160,13 @@ namespace Server.Items
             }
         }
 
+        private int m_PhysicalResistance = -1, m_FireResistance = -1, m_ColdResistance = -1, m_PoisonResistance = -1, m_EnergyResistance = -1; //daat99 OWLTR
+		
         public override int PhysicalResistance
         {
             get
             {
-                return BasePhysicalResistance + GetProtOffset() + m_PhysicalBonus;
+                return ((m_PhysicalResistance != -1) ? m_PhysicalResistance : (BasePhysicalResistance + GetProtOffset() + GetResourceAttrs(this.m_Resource).ArmorPhysicalResist + m_PhysicalBonus)); //daat99 OWLTR
             }
         }
 
@@ -1207,7 +1174,7 @@ namespace Server.Items
         {
             get
             {
-                return BaseFireResistance + GetProtOffset() + m_FireBonus;
+                return ((m_FireResistance != -1) ? m_FireResistance : (BaseFireResistance + GetProtOffset() + GetResourceAttrs(this.m_Resource).ArmorFireResist + m_FireBonus)); //daat99 OWLTR
             }
         }
 
@@ -1215,7 +1182,7 @@ namespace Server.Items
         {
             get
             {
-                return BaseColdResistance + GetProtOffset() + m_ColdBonus;
+                return ((m_ColdResistance != -1) ? m_ColdResistance : (BaseColdResistance + GetProtOffset() + GetResourceAttrs(this.m_Resource).ArmorColdResist + m_ColdBonus)); //daat99 OWLTR
             }
         }
 
@@ -1223,7 +1190,7 @@ namespace Server.Items
         {
             get
             {
-                return BasePoisonResistance + GetProtOffset() + m_PoisonBonus;
+                return ((m_PoisonResistance != -1) ? m_PoisonResistance : (BasePoisonResistance + GetProtOffset() + GetResourceAttrs(this.m_Resource).ArmorPoisonResist + m_PoisonBonus)); //daat99 OWLTR
             }
         }
 
@@ -1231,7 +1198,7 @@ namespace Server.Items
         {
             get
             {
-                return BaseEnergyResistance + GetProtOffset() + m_EnergyBonus;
+                return ((m_EnergyResistance != -1) ? m_EnergyResistance : (BaseEnergyResistance + GetProtOffset() + GetResourceAttrs(this.m_Resource).ArmorEnergyResist + m_EnergyBonus)); //daat99 OWLTR
             }
         }
 
@@ -1702,8 +1669,18 @@ namespace Server.Items
         {
             base.Serialize(writer);
 
-            writer.Write((int)13); // version
-
+            //daat99 OWLTR start - increase version from 13 to 14 and save resistance
+            writer.Write((int)14); // version
+            //version 14
+            writer.WriteEncodedInt((int)PhysicalResistance);
+            writer.WriteEncodedInt((int)FireResistance);
+            writer.WriteEncodedInt((int)ColdResistance);
+            writer.WriteEncodedInt((int)PoisonResistance);
+            writer.WriteEncodedInt((int)EnergyResistance);
+            //end version 14
+            //daat99 OWLTR end
+			
+			//Version 13
             writer.Write(_VvVItem);
             writer.Write(_Owner);
             writer.Write(_OwnerName);
@@ -1915,6 +1892,17 @@ namespace Server.Items
 
             switch ( version )
             {
+                //daat99 OWLTR start - load resists version 14
+                case 14:
+                    {
+                        m_PhysicalResistance = reader.ReadEncodedInt();
+                        m_FireResistance = reader.ReadEncodedInt();
+                        m_ColdResistance = reader.ReadEncodedInt();
+                        m_PoisonResistance = reader.ReadEncodedInt();
+                        m_EnergyResistance = reader.ReadEncodedInt();
+                        goto case 13;
+                    }
+                //daat99 OWLTR end
                 case 13:
                 case 12:
                     {
@@ -2235,6 +2223,23 @@ namespace Server.Items
                                 case 8:
                                     info = OreInfo.Valorite;
                                     break;
+                                //daat99 OWLTR start - add custom ores
+                                case 9:
+									info = OreInfo.Blaze;
+									break;
+                                case 10:
+									info = OreInfo.Ice;
+									break;
+                                case 11:
+									info = OreInfo.Toxic;
+									break;
+                                case 12:
+									info = OreInfo.Electrum;
+									break;
+                                case 13:
+									info = OreInfo.Platinum;
+									break;
+                                //daat99 OWLTR end - add custom ores
                             }
 
                             m_Resource = CraftResources.GetFromOreInfo(info, mat);
@@ -2280,6 +2285,22 @@ namespace Server.Items
                                 m_Resource = CraftResource.HornedLeather;
                             else if (mat == ArmorMaterialType.Barbed)
                                 m_Resource = CraftResource.BarbedLeather;
+                            //daat99 OWLTR start - add custom leather
+                            else if (mat == ArmorMaterialType.Polar)
+                                m_Resource = CraftResource.PolarLeather;
+                            else if (mat == ArmorMaterialType.Synthetic)
+                                m_Resource = CraftResource.SyntheticLeather;
+                            else if (mat == ArmorMaterialType.BlazeL)
+                                m_Resource = CraftResource.BlazeLeather;
+                            else if (mat == ArmorMaterialType.Daemonic)
+                                m_Resource = CraftResource.DaemonicLeather;
+                            else if (mat == ArmorMaterialType.Shadow)
+                                m_Resource = CraftResource.ShadowLeather;
+                            else if (mat == ArmorMaterialType.Frost)
+                                m_Resource = CraftResource.FrostLeather;
+                            else if (mat == ArmorMaterialType.Ethereal)
+                                m_Resource = CraftResource.EtherealLeather;
+                            //daat99 OWLTR end
                             else
                                 m_Resource = CraftResource.Iron;
                         }
@@ -2674,83 +2695,10 @@ namespace Server.Items
 
         public override void AddNameProperty(ObjectPropertyList list)
         {
-            int oreType;
-
-            switch ( m_Resource )
-            {
-                case CraftResource.DullCopper:
-                    oreType = 1053108;
-                    break; // dull copper
-                case CraftResource.ShadowIron:
-                    oreType = 1053107;
-                    break; // shadow iron
-                case CraftResource.Copper:
-                    oreType = 1053106;
-                    break; // copper
-                case CraftResource.Bronze:
-                    oreType = 1053105;
-                    break; // bronze
-                case CraftResource.Gold:
-                    oreType = 1053104;
-                    break; // golden
-                case CraftResource.Agapite:
-                    oreType = 1053103;
-                    break; // agapite
-                case CraftResource.Verite:
-                    oreType = 1053102;
-                    break; // verite
-                case CraftResource.Valorite:
-                    oreType = 1053101;
-                    break; // valorite
-                case CraftResource.SpinedLeather:
-                    oreType = 1061118;
-                    break; // spined
-                case CraftResource.HornedLeather:
-                    oreType = 1061117;
-                    break; // horned
-                case CraftResource.BarbedLeather:
-                    oreType = 1061116;
-                    break; // barbed
-                case CraftResource.RedScales:
-                    oreType = 1060814;
-                    break; // red
-                case CraftResource.YellowScales:
-                    oreType = 1060818;
-                    break; // yellow
-                case CraftResource.BlackScales:
-                    oreType = 1060820;
-                    break; // black
-                case CraftResource.GreenScales:
-                    oreType = 1060819;
-                    break; // green
-                case CraftResource.WhiteScales:
-                    oreType = 1060821;
-                    break; // white
-                case CraftResource.BlueScales:
-                    oreType = 1060815;
-                    break; // blue
-                case CraftResource.OakWood:
-                    oreType = 1072533; 
-                    break; // oak
-                case CraftResource.AshWood:
-                    oreType = 1072534;
-                    break; // ash
-                case CraftResource.YewWood:
-                    oreType = 1072535;
-                    break; // yew
-                case CraftResource.Heartwood:
-                    oreType = 1072536;
-                    break; // heartwood
-                case CraftResource.Bloodwood:
-                    oreType = 1072538;
-                    break; // bloodwood
-                case CraftResource.Frostwood:
-                    oreType = 1072539;
-                    break; // frostwood
-                default:
-                    oreType = 0;
-                    break;
-            }
+            //daat99 OWLTR start - add custom resources to name
+            string oreType = CraftResources.GetName(m_Resource);
+            int level = CraftResources.GetIndex(m_Resource) + 1;
+			//daat99 OWLTR - end
 
             if (m_ReforgedPrefix != ReforgedPrefix.None || m_ReforgedSuffix != ReforgedSuffix.None)
             {
@@ -2770,14 +2718,14 @@ namespace Server.Items
             }
             else if (m_Quality == ItemQuality.Exceptional)
             {
-                if (oreType != 0)
+                if (level > 1 && !string.IsNullOrEmpty(oreType))  //daat99 OWLTR
                     list.Add(1053100, "#{0}\t{1}", oreType, GetNameString()); // exceptional ~1_oretype~ ~2_armortype~
                 else
                     list.Add(1050040, GetNameString()); // exceptional ~1_ITEMNAME~
             }
             else
             {
-                if (oreType != 0)
+                if (level > 1 && !string.IsNullOrEmpty(oreType)) //daat99 OWLTR
                     list.Add(1053099, "#{0}\t{1}", oreType, GetNameString()); // ~1_oretype~ ~2_armortype~
                 else if (Name == null)
                     list.Add(LabelNumber);

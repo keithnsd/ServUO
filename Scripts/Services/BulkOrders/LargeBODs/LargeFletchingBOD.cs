@@ -16,6 +16,14 @@ namespace Server.Engines.BulkOrders
             0.018750000, // Heartwood
             0.007500000, // Bloodwood
             0.003000000 // Frostwood
+			//daat99 OWLTR - start - custom resources
+			,
+			0.002000000, // Ebony
+			0.001500000, // Bamboo
+			0.001400000, // PurpleHeart
+			0.001200000, // Redwood
+			0.001000000  // Petrified
+			//daat99 OWLTR - end - custom resources
         };
 
         [Constructable]

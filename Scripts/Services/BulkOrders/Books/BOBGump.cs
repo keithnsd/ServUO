@@ -327,7 +327,7 @@ namespace Server.Engines.BulkOrders
                         return deedType == BODType.Inscription;
                     case 8:
                         return deedType == BODType.Cooking;
-                    case 9:
+                    case 9: //Blacksmithy
                         return (mat == BulkMaterialType.None && deedType == BODType.Smith);
                     case 10:
                         return (mat == BulkMaterialType.DullCopper && deedType == BODType.Smith);
@@ -345,66 +345,130 @@ namespace Server.Engines.BulkOrders
                         return (mat == BulkMaterialType.Verite && deedType == BODType.Smith);
                     case 17:
                         return (mat == BulkMaterialType.Valorite && deedType == BODType.Smith);
-
+					//daat99 OWLTR - start - custom reources
                     case 18:
-                        return (mat == BulkMaterialType.None && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Cloth);
+                        return (mat == BulkMaterialType.Blaze && deedType == BODType.Smith);
                     case 19:
-                        return (mat == BulkMaterialType.None && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
+                        return (mat == BulkMaterialType.Ice && deedType == BODType.Smith);
                     case 20:
-                        return (mat == BulkMaterialType.Spined && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
+                        return (mat == BulkMaterialType.Toxic && deedType == BODType.Smith);
                     case 21:
-                        return (mat == BulkMaterialType.Horned && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
+                        return (mat == BulkMaterialType.Electrum && deedType == BODType.Smith);
                     case 22:
-                        return (mat == BulkMaterialType.Barbed && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
-
-                    case 23: // Tinkering
-                        return (mat == BulkMaterialType.None && deedType == BODType.Tinkering);
+                        return (mat == BulkMaterialType.Platinum && deedType == BODType.Smith);
+					//daat99 OWLTR - end - custom resources
+					
+                    case 23: //Tailoring
+                        return (mat == BulkMaterialType.None && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Cloth);
                     case 24:
-                        return (mat == BulkMaterialType.DullCopper && deedType == BODType.Tinkering);
+                        return (mat == BulkMaterialType.None && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
                     case 25:
-                        return (mat == BulkMaterialType.ShadowIron && deedType == BODType.Tinkering);
+                        return (mat == BulkMaterialType.Spined && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
                     case 26:
-                        return (mat == BulkMaterialType.Copper && deedType == BODType.Tinkering);
+                        return (mat == BulkMaterialType.Horned && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
                     case 27:
-                        return (mat == BulkMaterialType.Bronze && deedType == BODType.Tinkering);
-                    case 28:
-                        return (mat == BulkMaterialType.Gold && deedType == BODType.Tinkering);
+                        return (mat == BulkMaterialType.Barbed && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
+					//daat99 OWLTR - start - custom reources
+					case 28:
+                        return (mat == BulkMaterialType.Polar && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
                     case 29:
-                        return (mat == BulkMaterialType.Agapite && deedType == BODType.Tinkering);
+                        return (mat == BulkMaterialType.Synthetic && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
                     case 30:
-                        return (mat == BulkMaterialType.Verite && deedType == BODType.Tinkering);
-                    case 31:
-                        return (mat == BulkMaterialType.Valorite && deedType == BODType.Tinkering);
-
-                    case 32: // Carpentry
-                        return (mat == BulkMaterialType.None && deedType == BODType.Carpentry);
+                        return (mat == BulkMaterialType.BlazeL && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
+					case 31:
+                        return (mat == BulkMaterialType.Daemonic && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
+                    case 32:
+                        return (mat == BulkMaterialType.Shadow && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
                     case 33:
-                        return (mat == BulkMaterialType.OakWood && deedType == BODType.Carpentry);
-                    case 34:
-                        return (mat == BulkMaterialType.AshWood && deedType == BODType.Carpentry);
-                    case 35:
-                        return (mat == BulkMaterialType.YewWood && deedType == BODType.Carpentry);
+                        return (mat == BulkMaterialType.Frost && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
+					case 34:
+                        return (mat == BulkMaterialType.Ethereal && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
+					//daat99 OWLTR - end - custom reources
+					
+                    case 35: // Tinkering
+                        return (mat == BulkMaterialType.None && deedType == BODType.Tinkering);
                     case 36:
-                        return (mat == BulkMaterialType.Bloodwood && deedType == BODType.Carpentry);
+                        return (mat == BulkMaterialType.DullCopper && deedType == BODType.Tinkering);
                     case 37:
-                        return (mat == BulkMaterialType.Heartwood && deedType == BODType.Carpentry);
+                        return (mat == BulkMaterialType.ShadowIron && deedType == BODType.Tinkering);
                     case 38:
-                        return (mat == BulkMaterialType.Frostwood && deedType == BODType.Carpentry);
-
-                    case 39: // Fletching
-                        return (mat == BulkMaterialType.None && deedType == BODType.Fletching);
+                        return (mat == BulkMaterialType.Copper && deedType == BODType.Tinkering);
+                    case 39:
+                        return (mat == BulkMaterialType.Bronze && deedType == BODType.Tinkering);
                     case 40:
-                        return (mat == BulkMaterialType.OakWood && deedType == BODType.Fletching);
+                        return (mat == BulkMaterialType.Gold && deedType == BODType.Tinkering);
                     case 41:
-                        return (mat == BulkMaterialType.AshWood && deedType == BODType.Fletching);
+                        return (mat == BulkMaterialType.Agapite && deedType == BODType.Tinkering);
                     case 42:
-                        return (mat == BulkMaterialType.YewWood && deedType == BODType.Fletching);
+                        return (mat == BulkMaterialType.Verite && deedType == BODType.Tinkering);
                     case 43:
-                        return (mat == BulkMaterialType.Bloodwood && deedType == BODType.Fletching);
+                        return (mat == BulkMaterialType.Valorite && deedType == BODType.Tinkering);
+					//daat99 OWLTR - start - custom reources
                     case 44:
-                        return (mat == BulkMaterialType.Heartwood && deedType == BODType.Fletching);
+                        return (mat == BulkMaterialType.Blaze && deedType == BODType.Tinkering);
                     case 45:
+                        return (mat == BulkMaterialType.Ice && deedType == BODType.Tinkering);
+                    case 46:
+                        return (mat == BulkMaterialType.Toxic && deedType == BODType.Tinkering);
+                    case 47:
+                        return (mat == BulkMaterialType.Electrum && deedType == BODType.Tinkering);
+                    case 48:
+                        return (mat == BulkMaterialType.Platinum && deedType == BODType.Tinkering);
+					//daat99 OWLTR - end - custom reources
+
+                    case 49: // Carpentry
+                        return (mat == BulkMaterialType.None && deedType == BODType.Carpentry);
+                    case 50:
+                        return (mat == BulkMaterialType.OakWood && deedType == BODType.Carpentry);
+                    case 51:
+                        return (mat == BulkMaterialType.AshWood && deedType == BODType.Carpentry);
+                    case 52:
+                        return (mat == BulkMaterialType.YewWood && deedType == BODType.Carpentry);
+                    case 53:
+                        return (mat == BulkMaterialType.Bloodwood && deedType == BODType.Carpentry);
+                    case 54:
+                        return (mat == BulkMaterialType.Heartwood && deedType == BODType.Carpentry);
+                    case 55:
+                        return (mat == BulkMaterialType.Frostwood && deedType == BODType.Carpentry);
+					//daat99 OWLTR - start - custom reources
+                    case 56:
+                        return (mat == BulkMaterialType.Ebony && deedType == BODType.Carpentry);
+                    case 57:
+                        return (mat == BulkMaterialType.Bamboo && deedType == BODType.Carpentry);
+                    case 58:
+                        return (mat == BulkMaterialType.PurpleHeart && deedType == BODType.Carpentry);
+                    case 59:
+                        return (mat == BulkMaterialType.Redwood && deedType == BODType.Carpentry);
+                    case 60:
+                        return (mat == BulkMaterialType.Petrified && deedType == BODType.Carpentry);
+					//daat99 OWLTR - end - custom reources
+
+                    case 61: // Fletching
+                        return (mat == BulkMaterialType.None && deedType == BODType.Fletching);
+                    case 62:
+                        return (mat == BulkMaterialType.OakWood && deedType == BODType.Fletching);
+                    case 63:
+                        return (mat == BulkMaterialType.AshWood && deedType == BODType.Fletching);
+                    case 64:
+                        return (mat == BulkMaterialType.YewWood && deedType == BODType.Fletching);
+                    case 65:
+                        return (mat == BulkMaterialType.Bloodwood && deedType == BODType.Fletching);
+                    case 66:
+                        return (mat == BulkMaterialType.Heartwood && deedType == BODType.Fletching);
+                    case 67:
                         return (mat == BulkMaterialType.Frostwood && deedType == BODType.Fletching);
+					//daat99 OWLTR - start - custom reources
+                    case 68:
+                        return (mat == BulkMaterialType.Ebony && deedType == BODType.Fletching);
+                    case 69:
+                        return (mat == BulkMaterialType.Bamboo && deedType == BODType.Fletching);
+                    case 70:
+                        return (mat == BulkMaterialType.PurpleHeart && deedType == BODType.Fletching);
+                    case 71:
+                        return (mat == BulkMaterialType.Redwood && deedType == BODType.Fletching);
+                    case 72:
+                        return (mat == BulkMaterialType.Petrified && deedType == BODType.Fletching);
+					//daat99 OWLTR - end - custom reources
                 }
             }
             else
@@ -425,12 +489,28 @@ namespace Server.Engines.BulkOrders
                     case 9: return (mat == BulkMaterialType.Agapite);
                     case 10: return (mat == BulkMaterialType.Verite);
                     case 11: return (mat == BulkMaterialType.Valorite);
+					//daat99 OWLTR - start - custom reources
+					case 12: return (mat == BulkMaterialType.Blaze);
+					case 13: return (mat == BulkMaterialType.Ice);
+					case 14: return (mat == BulkMaterialType.Toxic);
+					case 15: return (mat == BulkMaterialType.Electrum);
+					case 16: return (mat == BulkMaterialType.Platinum);
+					//daat99 OWLTR - end - custom reources
 
-                    case 12: return (mat == BulkMaterialType.None && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Cloth);
-                    case 13: return (mat == BulkMaterialType.None && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
-                    case 14: return (mat == BulkMaterialType.Spined);
-                    case 15: return (mat == BulkMaterialType.Horned);
-                    case 16: return (mat == BulkMaterialType.Barbed);
+                    case 17: return (mat == BulkMaterialType.None && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Cloth);
+                    case 18: return (mat == BulkMaterialType.None && BGTClassifier.Classify(deedType, itemType) == BulkGenericType.Leather);
+                    case 19: return (mat == BulkMaterialType.Spined);
+                    case 20: return (mat == BulkMaterialType.Horned);
+                    case 21: return (mat == BulkMaterialType.Barbed);
+					//daat99 OWLTR - start - custom reources
+					case 22: return (mat == BulkMaterialType.Polar);
+					case 23: return (mat == BulkMaterialType.Synthetic);
+					case 24: return (mat == BulkMaterialType.BlazeL);
+					case 25: return (mat == BulkMaterialType.Daemonic);
+					case 26: return (mat == BulkMaterialType.Shadow);
+					case 27: return (mat == BulkMaterialType.Frost);
+					case 28: return (mat == BulkMaterialType.Ethereal);
+					//daat99 OWLTR - end - custom reources
                 }
             }
         }
@@ -569,6 +649,18 @@ namespace Server.Engines.BulkOrders
                                     return 1018338;
                                 case BulkMaterialType.Valorite:
                                     return 1018339;
+								//daat9 OWLTR start - custom resources
+								case BulkMaterialType.Blaze:
+									return "Blaze";
+								case BulkMaterialType.Ice:
+									return "Ice";
+								case BulkMaterialType.Toxic:
+									return "Toxic";
+								case BulkMaterialType.Electrum:
+									return "Electrum";
+								case BulkMaterialType.Platinum:
+									return "Platinum";
+								//daat9 OWLTR end - custom resources
                             }
                         }
 
@@ -591,6 +683,22 @@ namespace Server.Engines.BulkOrders
                                 return 1062237;
                             case BulkMaterialType.Barbed:
                                 return 1062238;
+                            //daat9 OWLTR start - custom resources
+                            case BulkMaterialType.Polar:
+								return "Polar";
+                            case BulkMaterialType.Synthetic:
+								return "Synthetic";
+                            case BulkMaterialType.BlazeL:
+								return "Blaze";
+                            case BulkMaterialType.Daemonic:
+								return "Daemonic";
+                            case BulkMaterialType.Shadow:
+								return "Shadow";
+                            case BulkMaterialType.Frost:
+								return "Frost";
+                            case BulkMaterialType.Ethereal:
+								return "Ethereal";
+                            //daat9 OWLTR end - custom resources
                         }
 
                         break;
@@ -610,6 +718,13 @@ namespace Server.Engines.BulkOrders
                             case BulkMaterialType.Heartwood: return 1071432;
                             case BulkMaterialType.Bloodwood: return 1071431;
                             case BulkMaterialType.Frostwood: return 1071433;
+                            //daat9 OWLTR start - custom resources
+                            case BulkMaterialType.Ebony: return "Ebony";
+                            case BulkMaterialType.Bamboo: return "Bamboo";
+                            case BulkMaterialType.PurpleHeart: return "PurpleHeart";
+                            case BulkMaterialType.Redwood: return "Redwood";
+                            case BulkMaterialType.Petrified: return "Petrified";
+                            //daat9 OWLTR end - custom resources
                         }
                     }
             }

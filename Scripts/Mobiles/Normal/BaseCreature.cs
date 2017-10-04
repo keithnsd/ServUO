@@ -32,6 +32,7 @@ using Server.Targeting;
 using System.Linq;
 using Server.Spells.SkillMasteries;
 using Server.Prompts;
+using daat99; //daat99 OWLTR
 #endregion
 
 namespace Server.Mobiles
@@ -109,6 +110,11 @@ namespace Server.Mobiles
         Blue,
         MedusaLight,
         MedusaDark,
+        //daat99 OWLTR - custom scales - start
+        Copper,
+        Silver,
+        Gold,
+        //daat99 OWLTR - custom scales - end
         All
     }
 
@@ -126,6 +132,16 @@ namespace Server.Mobiles
         Horned,
         Barbed,
         Fur
+        //daat99 OWLTR - custom hides - start
+        ,
+        Polar,
+        Synthetic,
+        BlazeL,
+        Daemonic,
+        Shadow,
+        Frost,
+        Ethereal
+        //daat99 OWLTR - custom hides - end
     }
 
     public enum TribeType
@@ -2181,6 +2197,15 @@ namespace Server.Mobiles
                             case HideType.Spined: leather = new SpinedLeather(hides); break;
                             case HideType.Horned: leather = new HornedLeather(hides); break;
                             case HideType.Barbed: leather = new BarbedLeather(hides); break;
+                            //daat99 OWLTR - custom leather - start
+                            case HideType.Polar: leather = new PolarLeather(hides); break;
+                            case HideType.Synthetic: leather = new SyntheticLeather(hides); break;
+                            case HideType.BlazeL: leather = new BlazeLeather(hides); break;
+                            case HideType.Daemonic: leather = new DaemonicLeather(hides); break;
+                            case HideType.Shadow: leather = new ShadowLeather(hides); break;
+                            case HideType.Frost: leather = new FrostLeather(hides); break;
+                            case HideType.Ethereal: leather = new EtherealLeather(hides); break;
+                            //daat99 OWLTR - custom leather - end
                         }
 
                         if (leather != null)
@@ -2206,6 +2231,22 @@ namespace Server.Mobiles
                             corpse.AddCarvedItem(new HornedHides(hides), from);
                         else if (HideType == HideType.Barbed)
                             corpse.AddCarvedItem(new BarbedHides(hides), from);
+                        //daat99 OWLTR - custom hides - start
+                        else if (HideType == HideType.Polar)
+                            corpse.AddCarvedItem(new PolarHides(hides), from);
+                        else if (HideType == HideType.Synthetic)
+                            corpse.AddCarvedItem(new SyntheticHides(hides), from);
+                        else if (HideType == HideType.BlazeL)
+                            corpse.AddCarvedItem(new BlazeHides(hides), from);
+                        else if (HideType == HideType.Daemonic)
+                            corpse.AddCarvedItem(new DaemonicHides(hides), from);
+                        else if (HideType == HideType.Shadow)
+                            corpse.AddCarvedItem(new ShadowHides(hides), from);
+                        else if (HideType == HideType.Frost)
+                            corpse.AddCarvedItem(new FrostHides(hides), from);
+                        else if (HideType == HideType.Ethereal)
+                            corpse.AddCarvedItem(new EtherealHides(hides), from);
+                        //daat99 OWLTR - custom hides- end
 
                         from.SendLocalizedMessage(500471); // You skin it, and the hides are now in the corpse.
                     }
@@ -2224,6 +2265,11 @@ namespace Server.Mobiles
                         case ScaleType.Green: list.Add(new GreenScales(scales)); break;
                         case ScaleType.White: list.Add(new WhiteScales(scales)); break;
                         case ScaleType.Blue: list.Add(new BlueScales(scales)); break;
+                        //daat99 OWLTR start - custom scales
+                        case ScaleType.Copper: corpse.DropItem(new CopperScales(scales)); break;
+                        case ScaleType.Silver: corpse.DropItem(new SilverScales(scales)); break;
+                        case ScaleType.Gold: corpse.DropItem(new GoldScales(scales)); break;
+                        //daat99 OWLTR end - custom scales
                         case ScaleType.All:
                             {
                                 list.Add(new RedScales(scales));
@@ -2232,6 +2278,11 @@ namespace Server.Mobiles
                                 list.Add(new GreenScales(scales));
                                 list.Add(new WhiteScales(scales));
                                 list.Add(new BlueScales(scales));
+                                //daat99 OWLTR start - custom scales
+                                list.Add(new CopperScales(scales));
+                                list.Add(new SilverScales(scales));
+                                list.Add(new GoldScales(scales));
+                                //daat99 OWLTR end - custom scales
                                 break;
                             }
                     }
@@ -5095,6 +5146,40 @@ namespace Server.Mobiles
             {
                 PackItem(new Gold(amount));
             }
+
+            //daat99 OWLTR start - add recipies to pack
+            if (OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.RECIPE_CRAFT))
+            {
+                if (amount >= 10 && amount < 50)
+                    amount = 1;
+                else if (amount >= 50 && amount < 125)
+                    amount = 2;
+                else if (amount >= 125 && amount < 225)
+                    amount = 3;
+                else if (amount >= 225 && amount < 350)
+                    amount = 4;
+                else if (amount >= 350 && amount < 500)
+                    amount = 5;
+                else if (amount >= 500)
+                    amount = 6;
+                else
+                    return;
+                if (Utility.Random(100) == 50)
+                    PackItem(new CraftingRecipe(0));
+                int check = 3, level = amount;
+                if (amount < check)
+                    check = amount;
+                while (check != 0)
+                {
+                    if (check > 2)
+                        PackItem(new CraftingRecipe(level));
+                    else
+                        PackItem(new CraftingRecipe(Utility.RandomMinMax(1, amount)));
+                    level--;
+                    check--;
+                }
+            }
+            //daat99 OWLTR end - add gold/recipies
         }
 
         public void PackGold(int min, int max)
@@ -5184,6 +5269,37 @@ namespace Server.Mobiles
             reg.Amount = amount;
 
             PackItem(reg);
+			
+            //daat99 OWLTR start - add recipies to pack
+            if (OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.RECIPE_CRAFT))
+            {
+                if (Utility.Random(100) == 50)
+                    PackItem(new CraftingRecipe(0));
+                amount = Utility.RandomMinMax(1, amount);
+                if (amount > 4)
+                    amount = 4;
+                switch (amount)
+                {
+                    case 1:
+                    default: amount = Utility.RandomMinMax(1, 3); break;
+                    case 2: amount = Utility.RandomMinMax(2, 4); break;
+                    case 3: amount = Utility.RandomMinMax(3, 5); break;
+                    case 4: amount = Utility.RandomMinMax(4, 6); break;
+                }
+                int check = 3, level = amount;
+                if (level < check)
+                    check = level;
+                while (check != 0)
+                {
+                    if (check > 2)
+                        PackItem(new CraftingRecipe(level));
+                    else
+                        PackItem(new CraftingRecipe(Utility.RandomMinMax(1, amount)));
+                    level--;
+                    check--;
+                }
+            }
+            //daat99 OWLTR end - add recipies to pack
         }
 
         public void PackBodyPart()
@@ -5424,6 +5540,16 @@ namespace Server.Mobiles
 
         public virtual bool IgnoreYoungProtection { get { return false; } }
 
+        //daat99 OWLTR start - On Before (Re) Tame methods
+        public virtual void OnBeforeTame()
+        {
+        }
+
+        public virtual void OnBeforeReTame()
+        {
+        }
+        //daat99 OWLTR start - On Before (Re) Tame methods
+		
         public override bool OnBeforeDeath()
         {
             int treasureLevel = TreasureMapLevel;
@@ -6018,6 +6144,11 @@ namespace Server.Mobiles
                             continue;
                         }
 
+						//daat99 OWLTR start - add tokens on death
+						if (OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.MONSTER_GIVE_TOKENS))
+							GiveTokens.CalculateTokens(ds.m_Mobile, this);
+						//daat99 OWLTR/Tokens end - add tokens on death
+						
                         if (GivesFameAndKarmaAward)
                         {
                             Party party = Engines.PartySystem.Party.Get(ds.m_Mobile);

@@ -513,9 +513,9 @@ namespace Server.Engines.BulkOrders
 
             if (bod.AmountMax == 20 && (!CanBeExceptional(bod) || bod.RequireExceptional) &&
                      (!CanUseMaterial(bod) ||
-                     (bod.Material == BulkMaterialType.Valorite ||
-                      bod.Material == BulkMaterialType.Frostwood ||
-                      bod.Material == BulkMaterialType.Barbed)))
+                     (bod.Material == BulkMaterialType.Platinum || //daat99 OWLTR
+                      bod.Material == BulkMaterialType.Ethereal || //daat99 OWLTR
+                      bod.Material == BulkMaterialType.Petrified))) //daat99 OWLTR
             {
                 vendor.SayTo(from, 1152291, 0x3B2); // I won't be able to replace that bulk order with a better one.
                 return false;
@@ -610,7 +610,7 @@ namespace Server.Engines.BulkOrders
                 picker.Add(1);
             }
 
-            if (CanUseMaterial(bod) && bod.Material != BulkMaterialType.Frostwood && bod.Material != BulkMaterialType.Barbed && bod.Material != BulkMaterialType.Valorite)
+            if (CanUseMaterial(bod) && bod.Material != BulkMaterialType.Petrified && bod.Material != BulkMaterialType.Ethereal && bod.Material != BulkMaterialType.Platinum) //daat99 OWLTR - Custom Resources
             {
                 picker.Add(2);
             }
@@ -664,15 +664,38 @@ namespace Server.Engines.BulkOrders
                 case BulkMaterialType.Agapite: worth += 400; break;
                 case BulkMaterialType.Verite: worth += 500; break;
                 case BulkMaterialType.Valorite: worth += 600; break;
+				//daat99 OWLTR start - custom resources				
+                case BulkMaterialType.Blaze: worth += 650; break;
+                case BulkMaterialType.Ice: worth += 700; break;
+                case BulkMaterialType.Toxic: worth += 800; break;
+                case BulkMaterialType.Electrum: worth += 900; break;
+                case BulkMaterialType.Platinum: worth += 1000; break;
+				//daat99 OWLTR end - custom resources
                 case BulkMaterialType.Spined: worth += 100; break;
                 case BulkMaterialType.Horned: worth += 250; break;
                 case BulkMaterialType.Barbed: worth += 500; break;
+				//daat99 OWLTR start - custom resources				
+                case BulkMaterialType.Polar: worth += 550; break;
+                case BulkMaterialType.Synthetic: worth += 600; break;
+                case BulkMaterialType.BlazeL: worth += 650; break;
+                case BulkMaterialType.Daemonic: worth += 700; break;
+                case BulkMaterialType.Shadow: worth += 800; break;
+                case BulkMaterialType.Frost: worth += 900; break;
+                case BulkMaterialType.Ethereal: worth += 1000; break;
+				//daat99 OWLTR end - custom resources
                 case BulkMaterialType.OakWood: worth += 100; break;
                 case BulkMaterialType.AshWood: worth += 200; break;
                 case BulkMaterialType.YewWood: worth += 300; break;
                 case BulkMaterialType.Heartwood: worth += 400; break;
                 case BulkMaterialType.Bloodwood: worth += 500; break;
                 case BulkMaterialType.Frostwood: worth += 600; break;
+				//daat99 OWLTR start - custom resources				
+                case BulkMaterialType.Ebony: worth += 650; break;
+                case BulkMaterialType.Bamboo: worth += 700; break;
+                case BulkMaterialType.PurpleHeart: worth += 800; break;
+                case BulkMaterialType.Redwood: worth += 900; break;
+                case BulkMaterialType.Petrified: worth += 1000; break;
+				//daat99 OWLTR end - custom resources
             }
 
             switch (bod.AmountMax)

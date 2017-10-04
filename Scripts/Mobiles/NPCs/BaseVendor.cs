@@ -19,6 +19,7 @@ using Server.Misc;
 using Server.Mobiles;
 using Server.Network;
 using Server.Regions;
+using daat99; //daat99 OWLTR
 #endregion
 
 namespace Server.Mobiles
@@ -1245,6 +1246,11 @@ namespace Server.Mobiles
                     // On EA, you have to choose the reward before you get the gold/fame reward.  IF you right click the gump, you lose 
                     // the gold/fame for that bod.
 
+					//daat99 OWLTR start - give tokens for bods
+					if (OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.BOD_GIVE_TOKENS) && gold > 100)
+						TokenSystem.GiveTokensToPlayer(from as PlayerMobile, (int)(gold / 100));
+					//daat99 OWLTR end - give tokens for bods
+					
                     Banker.Deposit(from, gold, true);
                 }
                 else
@@ -1256,6 +1262,11 @@ namespace Server.Mobiles
                         from.AddToBackpack(reward);
                     }
 
+					//daat99 OWLTR start - give tokens for bods
+					if (OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.BOD_GIVE_TOKENS) && gold > 100)
+						TokenSystem.GiveTokensToPlayer(from as PlayerMobile, (int)(gold / 100));
+					//daat99 OWLTR end - give tokens for bods
+					
                     Banker.Deposit(from, gold, true);
                 }
 

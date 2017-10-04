@@ -2,6 +2,7 @@ using System;
 using Server.Items;
 using Server.Mobiles;
 using Server.Targeting;
+using daat99;
 
 namespace Server.Engines.Harvest
 {
@@ -98,7 +99,14 @@ namespace Server.Engines.Harvest
                 new HarvestResource(85.0, 45.0, 125.0, 1007077, typeof(GoldOre), typeof(GoldGranite), typeof(GoldenElemental)),
                 new HarvestResource(90.0, 50.0, 130.0, 1007078, typeof(AgapiteOre), typeof(AgapiteGranite), typeof(AgapiteElemental)),
                 new HarvestResource(95.0, 55.0, 135.0, 1007079, typeof(VeriteOre), typeof(VeriteGranite), typeof(VeriteElemental)),
-                new HarvestResource(99.0, 59.0, 139.0, 1007080, typeof(ValoriteOre), typeof(ValoriteGranite), typeof(ValoriteElemental))
+                new HarvestResource(99.0, 59.0, 139.0, 1007080, typeof(ValoriteOre), typeof(ValoriteGranite), typeof(ValoriteElemental)),
+				//daat99 OWLTR - custom ores - start
+				new HarvestResource( 100.0, 60.0, 140.0, "You put some Blaze ore in your backpack",			typeof( BlazeOre ),				typeof( BlazeGranite ),			typeof( BlazeOreElemental ) ),
+				new HarvestResource( 105.0, 65.0, 145.0, "You put some Ice ore in your backpack", 			typeof( IceOre ),				typeof( IceGranite ),			typeof( IceOreElemental ) ),
+				new HarvestResource( 110.0, 70.0, 150.0, "You put some Toxic ore in your backpack",			typeof( ToxicOre ),				typeof( ToxicGranite ),			typeof( ToxicOreElemental ) ),
+				new HarvestResource( 115.0, 75.0, 155.0, "You put some Electrum ore in your backpack",		typeof( ElectrumOre ),			typeof( ElectrumGranite ),		typeof( ElectrumOreElemental ) ),
+				new HarvestResource( 119.0, 79.0, 159.0, "You put some Platinum ore in your backpack",		typeof( PlatinumOre ),			typeof( PlatinumGranite ),		typeof( PlatinumOreElemental ) )
+				//daat99 OWLTR - custom ores - end
             };
 
             veins = new HarvestVein[]
@@ -108,10 +116,17 @@ namespace Server.Engines.Harvest
                 new HarvestVein(09.8, 0.5, res[2], res[0]), // Shadow Iron
                 new HarvestVein(08.4, 0.5, res[3], res[0]), // Copper
                 new HarvestVein(07.0, 0.5, res[4], res[0]), // Bronze
-                new HarvestVein(05.6, 0.5, res[5], res[0]), // Gold
-                new HarvestVein(04.2, 0.5, res[6], res[0]), // Agapite
-                new HarvestVein(02.8, 0.5, res[7], res[0]), // Verite
-                new HarvestVein(01.4, 0.5, res[8], res[0])// Valorite
+                new HarvestVein(06.6, 0.5, res[5], res[0]), // Gold - custom daat99
+                new HarvestVein(05.7, 0.5, res[6], res[0]), // Agapite  - custom daat99
+                new HarvestVein(05.0, 0.5, res[7], res[0]), // Verite - custom daat99
+                new HarvestVein(04.5, 0.5, res[8], res[0]),// Valorite - custom daat99
+				//daat99 OWLTR - custom ores - start
+				new HarvestVein( 04.0, 0.5, res[9], res[0] ), // Blaze
+				new HarvestVein( 03.5, 0.5, res[10], res[0] ), // Ice
+				new HarvestVein( 03.0, 0.5, res[11], res[0] ), // Toxic
+				new HarvestVein( 02.5, 0.5, res[12], res[0] ), // Electrum
+				new HarvestVein( 02.0, 0.5, res[13], res[0] ) // Platinum
+				//daat99 OWLTR - custom ores - end
             };
 
             oreAndStone.Resources = res;
@@ -320,7 +335,7 @@ namespace Server.Engines.Harvest
             1, 1
         };
 
-        public override void OnHarvestFinished(Mobile from, Item tool, HarvestDefinition def, HarvestVein vein, HarvestBank bank, HarvestResource resource, object harvested)
+        public override void OnHarvestFinished(Mobile from, Item tool, HarvestDefinition def, HarvestVein vein, HarvestBank bank, HarvestResource resource, object harvested, Type type) //daat99 OWLTR - added Type
         {
             if (tool is GargoylesPickaxe && def == this.m_OreAndStone && 0.1 > Utility.RandomDouble() && HarvestMap.CheckMapOnHarvest(from, harvested, def) == null)
             {
@@ -335,8 +350,19 @@ namespace Server.Engines.Harvest
                         if (map == null)
                             return;
 
-                        BaseCreature spawned = Activator.CreateInstance(res.Types[2], new object[] { 25 }) as BaseCreature;
-
+                        //daat99 OWLTR start - gargoyle spawn
+                        BaseCreature spawned = null;
+                        try
+                        {
+                            int i_Level = CraftResources.GetIndex(CraftResources.GetFromType(type)) + 1;
+                            if (i_Level > 1)
+                                spawned = new Elementals(i_Level);
+                        }
+                        catch { }
+                        if (spawned == null)
+							spawned = Activator.CreateInstance(res.Types[2], new object[] { 25 }) as BaseCreature;
+                        //daat99 OWLTR end - gargoyle spawn
+						
                         if (spawned != null)
                         {
                             int offset = Utility.Random(8) * 2;

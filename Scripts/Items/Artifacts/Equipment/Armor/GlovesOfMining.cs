@@ -517,7 +517,9 @@ namespace Server.Items
         {
             this.m_Bonus = bonus;
 
-            this.Hue = CraftResources.GetHue((CraftResource)Utility.RandomMinMax((int)CraftResource.DullCopper, (int)CraftResource.Valorite));
+			//daat99 OWLTR start = ores hues
+			this.Hue = CraftResources.GetHue( (CraftResource)Utility.RandomMinMax( (int)CraftResource.DullCopper, (int)CraftResource.Platinum ) );
+			//daat99 OWLTR end = ores hues
         }
 
         public BaseGlovesOfMining(Serial serial)

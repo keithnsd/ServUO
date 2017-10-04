@@ -26,6 +26,7 @@ using Server.Targeting;
 using Server.Spells.SkillMasteries;
 using System.Reflection;
 using Server.Spells.Mysticism;
+using daat99; //daat99 OWLTR
 #endregion
 
 namespace Server.Spells
@@ -365,6 +366,11 @@ namespace Server.Spells
 				return true;
 			}
 
+			//daat99 OWLTR start - use SpellCastersKey
+            if (OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.USE_STORAGE_RESOURCES) && MasterStorageUtils.ConsumePlayersStorageItems(m_Caster as PlayerMobile, m_Info.Reagents, m_Info.Amounts))
+                return true;
+            //daat99 OWLTR end - use SpellCastersKey
+			
 			return false;
 		}
 

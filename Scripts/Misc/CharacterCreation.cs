@@ -50,6 +50,7 @@ namespace Server.Misc
             PackItem(new Gold(1000)); // Starting gold can be customized here
             PackItem(new Candle());
 			PackItem(new Gold(10000)); //custom PirateCove
+			PackItem(new daat99.MasterStorage()); //daat99 OWLTR
 
             if (m.Race != Race.Gargoyle)
                 PackItem(new Dagger());
