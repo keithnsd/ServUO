@@ -386,7 +386,7 @@ namespace Server.Mobiles
         public virtual TimeSpan BondingDelay { get { return TimeSpan.FromDays(7.0); } }
         public virtual TimeSpan BondingAbandonDelay { get { return TimeSpan.FromDays(1.0); } }
 
-        public override bool CanRegenHits { get { return !m_IsDeadPet && base.CanRegenHits; } }
+        public override bool CanRegenHits { get { return !m_IsDeadPet && !Summoned && base.CanRegenHits; } }
         public override bool CanRegenStam { get { return !IsParagon && !m_IsDeadPet && base.CanRegenStam; } }
         public override bool CanRegenMana { get { return !m_IsDeadPet && base.CanRegenMana; } }
 
@@ -3644,6 +3644,11 @@ namespace Server.Mobiles
                 DrainLife();
             }
 
+            if (m_InRage && RageProbability >= Utility.RandomDouble())
+            {
+                DoRageHit(defender);
+            }
+
             if (DoesColossalBlow && !_Stunning && ColossalBlowChance > Utility.RandomDouble())
             {
                 DoColossalBlow(defender);
@@ -4183,6 +4188,11 @@ namespace Server.Mobiles
         {
             base.GetContextMenuEntries(from, list);
 
+            if (m_bControlled && m_ControlMaster == from && !m_bSummoned)
+            {
+                list.Add(new RenameEntry(from, this));
+            }
+
             if (m_AI != null && Commandable)
             {
                 m_AI.GetContextMenuEntries(from, list);
@@ -4191,11 +4201,6 @@ namespace Server.Mobiles
             if (m_bTamable && !m_bControlled && from.Alive)
             {
                 list.Add(new TameEntry(from, this));
-            }
-
-            if (m_bControlled && m_ControlMaster == from && !m_bSummoned)
-            {
-                list.Add(new RenameEntry(from, this));
             }
 
             AddCustomContextEntries(from, list);
@@ -6806,7 +6811,9 @@ namespace Server.Mobiles
                     AuraColdDamage,
                     AuraPoisonDamage,
                     AuraEnergyDamage,
-                    AuraChaosDamage);
+                    AuraChaosDamage,
+                    0,
+                    DamageType.SpellAOE);
 
                 m.RevealingAction();
                 AuraEffect(m);
