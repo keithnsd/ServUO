@@ -50,7 +50,7 @@ namespace Server.Spells.Mysticism
             else if (CheckHSequence(target))
             {
                 double duration = ((Caster.Skills[CastSkill].Value + Caster.Skills[DamageSkill].Value) / 20) + 2;
-                duration -= target.Skills[SkillName.MagicResist].Value / 10;
+                duration -= GetResistSkill(target) / 10;
 
                 if (duration <= 0 || StoneFormSpell.CheckImmunity(target))
                 {
@@ -70,7 +70,7 @@ namespace Server.Spells.Mysticism
         public static void DoSleep(Mobile caster, Mobile target, TimeSpan duration)
         {
             target.Combatant = null;
-            target.Send(SpeedControl.WalkSpeed);
+            target.SendSpeedControl(SpeedControlType.WalkSpeed);
 
             caster.PlaySound(0x657);
             target.FixedParticles(0x374A, 1, 15, 9502, 97, 3, (EffectLayer)255);
@@ -133,7 +133,7 @@ namespace Server.Spells.Mysticism
         {
             if (m_Table.ContainsKey(target))
             {
-                target.Send(SpeedControl.Disable);
+                target.SendSpeedControl(SpeedControlType.Disable);
 
                 m_Table[target].Stop();
                 m_Table.Remove(target);

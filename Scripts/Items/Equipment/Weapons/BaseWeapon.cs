@@ -933,12 +933,12 @@ namespace Server.Items
 
 			if (Layer == Layer.TwoHanded && layer == Layer.OneHanded)
 			{
-				m.SendLocalizedMessage(500214); // You already have something in both hands.
-				return true;
+                m.LocalOverheadMessage(MessageType.Regular, 0x3B2, 500214); // You already have something in both hands.
+                return true;
 			}
 			else if (Layer == Layer.OneHanded && layer == Layer.TwoHanded && !(item is BaseShield) && !(item is BaseEquipableLight))
 			{
-				m.SendLocalizedMessage(500215); // You can only wield one weapon at a time.
+                m.LocalOverheadMessage(MessageType.Regular, 0x3B2, 500215); // // You can only wield one weapon at a time.
 				return true;
 			}
 
@@ -2211,7 +2211,7 @@ namespace Server.Items
             // object is not a mobile, so we end here
             if (defender == null)
             {
-                AOS.Damage(damageable, attacker, damage, ignoreArmor, phys, fire, cold, pois, nrgy, chaos, direct, false, ranged, false);
+                AOS.Damage(damageable, attacker, damage, ignoreArmor, phys, fire, cold, pois, nrgy, chaos, direct, false, ranged ? Server.DamageType.Ranged : Server.DamageType.Melee);
 
                 // TODO: WeaponAbility/SpecialMove OnHit(...) convert target to IDamageable
                 // Figure out which specials work on items. For now AI only.
@@ -2391,6 +2391,8 @@ namespace Server.Items
 			}
 			#endregion
 
+            percentageBonus += ForceOfNature.GetBonus(attacker, defender);
+
             if (m_ExtendedWeaponAttributes.AssassinHoned > 0 && attacker.Direction == defender.Direction)
             {
                 if (!ranged || 0.5 > Utility.RandomDouble())
@@ -2400,6 +2402,9 @@ namespace Server.Items
             }
 
 			percentageBonus = Math.Min(percentageBonus, 300);
+
+            // bonus is seprate from weapon damage, ie not capped
+            percentageBonus += Spells.Mysticism.StoneFormSpell.GetMaxResistBonus(attacker);
 
 			damage = AOS.Scale(damage, 100 + percentageBonus);
 			#endregion
@@ -2556,12 +2561,7 @@ namespace Server.Items
 				chaos,
 				direct,
 				false,
-				ranged,
-				false);
-
-            #region Stygian Abyss
-            SoulChargeContext.CheckHit(attacker, defender, damageGiven);
-            #endregion
+				ranged ? Server.DamageType.Ranged : Server.DamageType.Melee);
 
             if (sparks)
             {
@@ -3055,8 +3055,7 @@ namespace Server.Items
 			}
 		}
 
-		public virtual void DoAreaAttack(
-			Mobile from, Mobile defender, int damageGiven, int sound, int hue, int phys, int fire, int cold, int pois, int nrgy)
+		public virtual void DoAreaAttack(Mobile from, Mobile defender, int damageGiven, int sound, int hue, int phys, int fire, int cold, int pois, int nrgy)
 		{
 			Map map = from.Map;
 
@@ -3076,21 +3075,21 @@ namespace Server.Items
 				}
 			}
 
-			if (list.Count == 0)
-			{
-				return;
-			}
+            if (list.Count > 0)
+            {
+                Effects.PlaySound(from.Location, map, sound);
 
-			Effects.PlaySound(from.Location, map, sound);
+                for (int i = 0; i < list.Count; ++i)
+                {
+                    Mobile m = list[i];
 
-			for (int i = 0; i < list.Count; ++i)
-			{
-				Mobile m = list[i];
+                    from.DoHarmful(m, true);
+                    m.FixedEffect(0x3779, 1, 15, hue, 0);
+                    AOS.Damage(m, from, (int)(damageGiven / 2), phys, fire, cold, pois, nrgy, Server.DamageType.SpellAOE);
+                }
+            }
 
-    			from.DoHarmful(m, true);
-				m.FixedEffect(0x3779, 1, 15, hue, 0);
-				AOS.Damage(m, from, (int)(damageGiven / 2), phys, fire, cold, pois, nrgy);
-			}
+            ColUtility.Free(list);
 		}
 		#endregion
 

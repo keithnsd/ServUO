@@ -626,6 +626,23 @@ namespace Server.Multis
         }
         #endregion
 
+        public override int GetUpdateRange(Mobile m)
+        {
+            int min = m.NetState != null ? m.NetState.UpdateRange : 18;
+            int max = Core.GlobalMaxUpdateRange;
+
+            int w = Components.Width;
+            int h = Components.Height - 1;
+            int v = min + ((w > h ? w : h) / 2);
+
+            if (v > max)
+                v = max;
+            else if (v < min)
+                v = min;
+
+            return v;
+        }
+
         public List<Mobile> AvailableVendorsFor(Mobile m)
         {
             List<Mobile> list = new List<Mobile>();
@@ -1694,6 +1711,9 @@ namespace Server.Multis
             if (m == null)
                 m = Owner;
 
+            Timer.DelayCall(() =>
+                i.PrivateOverheadMessage(MessageType.Regular, 0, locked ? 501721 : 501657, m.NetState)); // locked down! : [no longer locked down]
+
             if (locked)
             {
                 if (i is VendorRentalContract)
@@ -1829,7 +1849,7 @@ namespace Server.Multis
                 bool valid = m_House != null && Sextant.Format(m_House.Location, m_House.Map, ref xLong, ref yLat, ref xMins, ref yMins, ref xEast, ref ySouth);
 
                 if (valid)
-                    location = String.Format("{0}° {1}'{2}, {3}° {4}'{5}", yLat, yMins, ySouth ? "S" : "N", xLong, xMins, xEast ? "E" : "W");
+                    location = String.Format("{0}Â° {1}'{2}, {3}Â° {4}'{5}", yLat, yMins, ySouth ? "S" : "N", xLong, xMins, xEast ? "E" : "W");
                 else
                     location = "unknown";
 
@@ -2098,7 +2118,6 @@ namespace Server.Multis
                 }
                 else if (CanRelease(m, item))
                 {
-                    item.PublicOverheadMessage(Server.Network.MessageType.Label, 0x3B2, 501657);//[no longer locked down]
                     SetLockdown(m, item, false);
 
                     if (item is RewardBrazier)
@@ -2848,7 +2867,7 @@ namespace Server.Multis
                 case 10: // just a signal for updates
                 case 9:
                     {
-                        if (version == 18)
+                        if (version <= 18)
                         {
                             reader.ReadInt();
                         }
@@ -3677,6 +3696,8 @@ namespace Server.Multis
                         item.IsSecure = false;
                         item.Movable = true;
                         item.SetLastMoved();
+
+                        item.SendLocalizedMessage(501657, ""); // [no longer locked down]
                     }
                 }
 
@@ -3695,6 +3716,8 @@ namespace Server.Multis
                         item.IsSecure = false;
                         item.Movable = true;
                         item.SetLastMoved();
+
+                        item.SendLocalizedMessage(501657, ""); // [no longer locked down]
                     }
                 }
 
@@ -3717,6 +3740,8 @@ namespace Server.Multis
                         info.Item.IsSecure = false;
                         info.Item.Movable = true;
                         info.Item.SetLastMoved();
+
+                        info.Item.SendLocalizedMessage(501718, ""); // no longer secure!
                     }
                 }
 
@@ -3755,7 +3780,9 @@ namespace Server.Multis
                             {
                                 if (retainDeedHue)
                                     deed.Hue = hue;
+
                                 deed.MoveToWorld(item.Location, item.Map);
+                                deed.SendLocalizedMessage(501657, ""); // [no longer locked down]
                             }
                         }
 
@@ -4582,6 +4609,9 @@ namespace Server.Multis
                 if (!isOwned)
                     isOwned = house.IsLockedDown(item);
 
+                if (!isOwned)
+                    isOwned = item is BaseAddon;
+
                 if (isOwned)
                     sec = (ISecurable)item;
             }
@@ -4617,6 +4647,41 @@ namespace Server.Multis
             {
                 Owner.From.CloseGump(typeof (SetSecureLevelGump));
                 Owner.From.SendGump(new SetSecureLevelGump(Owner.From, sec, BaseHouse.FindHouseAt(m_Item)));
+            }
+        }
+    }
+
+    public class ReleaseEntry : ContextMenuEntry
+    {
+        public Mobile Mobile { get; set; }
+        public Item Item { get; set; }
+        public BaseHouse House { get; set; }
+
+        public ReleaseEntry(Mobile m, Item item, BaseHouse house)
+            : base(1153880, 8)
+        {
+            Item = item;
+            Mobile = m;
+            House = house;
+        }
+
+        public override void OnClick()
+        {
+            if (BaseHouse.FindHouseAt(Mobile) == House && House.IsOwner(Mobile))
+            {
+                if (Mobile.Backpack == null || !Mobile.Backpack.CheckHold(Mobile, Item, false))
+                {
+                    Mobile.SendLocalizedMessage(1153881); // Your pack cannot hold this
+                }
+                else
+                {
+                    House.Release(Mobile, Item);
+                    Mobile.Backpack.DropItem(Item);
+                }
+            }
+            else
+            {
+                Mobile.SendLocalizedMessage(1153882); // You do not own that.
             }
         }
     }
