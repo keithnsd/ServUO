@@ -174,7 +174,7 @@ namespace Server.Engines.Harvest
                 type = MutateType( type, from, tool, def, map, loc, resource );
               if (daatHarvesting)
               {
-                type = ResourceHelper.GetDaat99HarvestedType(type, bank.Vein.IsProspected, skillValue);
+                type = ResourceHelper.GetDaat99HarvestedType(type, bank.Vein.IsProspected, from.Skills[def.Skill].Value);
                 from.CheckSkill(def.Skill, 0.0, from.Skills[def.Skill].Cap + (vein.IsProspected?10.0:0.0));
               }
               //daat99 OWLTR end - daat99 harvesting
